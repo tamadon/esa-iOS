@@ -1,0 +1,69 @@
+name: esa-iOS
+
+options:
+  bundleIdPrefix: dev.tamadon
+  deploymentTarget:
+    iOS: 14.0
+
+targets:
+  esa-iOS:
+    type: application
+    platform: iOS
+    sources:
+      - esa-iOS
+    settings:
+      base:
+        INFOPLIST_FILE: esa-iOS/Info.plist
+        CODE_SIGN_ENTITLEMENTS: esa-iOS/esa-iOS.entitlements
+        DEVELOPMENT_LANGUAGE: jp
+      configs:
+        debug:
+          OTHER_SWIFT_FLAGS: $(inherited) -Xfrontend -warn-long-expression-type-checking=500 -Xfrontend -warn-long-function-bodies=500
+
+  esa-iOSTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - esa-iOSTests
+    settings:
+      base:
+        INFOPLIST_FILE: esa-iOSTests/Info.plist
+    dependencies:
+      - target: esa-iOS
+
+  esa-iOSUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - esa-iOSUITests
+    settings:
+      base:
+        INFOPLIST_FILE: esa-iOSUITests/Info.plist
+    dependencies:
+      - target: esa-iOS
+
+schemes:
+  esa-iOS:
+    build:
+      targets:
+        esa-iOS: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      coverageTargets:
+        - esa-iOS
+      targets:
+        - name: esa-iOSTests
+          parallelizable: true
+          randomExecutionOrder: true
+        - name: esa-iOSUITests
+          parallelizable: true
+          randomExecutionOrder: true
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
